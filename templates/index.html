@@ -53,29 +53,12 @@
       input[type="submit"]:hover {
         background-color: #45a049;
       }
-
-      p {
-        margin-top: 20px;
-      }
-
-      a {
-        color: #007bff;
-        text-decoration: none;
-      }
-
-      a:hover {
-        text-decoration: underline;
-      }
-
-      #hasil {
-        color: #4caf50;
-      }
     </style>
   </head>
   <body>
     <h1>Diagnosa Penyakit Diabetes</h1>
 
-    <form action="/upload" method="post" enctype="multipart/form-data">
+    <form action="/result" method="post" enctype="multipart/form-data">
       <label for="file">Pilih file Excel:</label>
       <input type="file" name="file" id="file" accept=".xlsx" />
       <br />
@@ -84,15 +67,6 @@
 
     {% if message %}
     <p>{{ message }}</p>
-    {% endif %} {% if result_path %}
-    <p>
-      Download your results:
-      <a
-        id="hasil"
-        href="{{ url_for('download_file', filename='hasil_diagnosa.xlsx') }}"
-        >hasil_diagnosa.xlsx</a
-      >
-    </p>
     {% endif %}
   </body>
 </html>

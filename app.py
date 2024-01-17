@@ -5,7 +5,7 @@ from sklearn.model_selection import train_test_split
 
 app = Flask(__name__)
 
-# Mentrain model SVM
+# Mentrain model dengan SVM
 data = pd.read_csv('data/dataset.csv')
 X = data[data.columns[:8]]
 y = data['Hasil']
@@ -18,9 +18,9 @@ clf.fit(x_train, y_train)
 def index():
     return render_template('index.html')
 
-# Memuat halaman upload file
-@app.route('/upload', methods=['POST'])
-def upload_file():
+# Memuat halaman result
+@app.route('/result', methods=['POST'])
+def result():
     if 'file' not in request.files:
         return render_template('index.html', message='No file part')
 
@@ -46,16 +46,19 @@ def upload_file():
         result_df['Hasil'] = result_df['Hasil'].replace({1: 'positif', 0: 'negatif'})
 
         # Menyimpan hasil prediksi ke dalam file excel
-        result_path = 'uploads/hasil_diagnosa.xlsx'
+        result_path = 'result/hasil diagnosa.xlsx'
         result_df.to_excel(result_path, index=False)
 
-        # Mengembalikan halaman utama dengan pesan sukses dan link untuk mengunduh hasil prediksi
-        return render_template('index.html', message='File uploaded and processed successfully. Download your results below.', result_path=result_path)
+        # Membaca file hasil prediksi dan mengonversinya ke HTML
+        result_html = result_df.to_html(classes='table table-striped', index=False)
+
+        # Mengembalikan halaman result dengan tabel HTML dan link untuk mengunduh hasil prediksi
+        return render_template('result.html', result_html=result_html, result_path=result_path)
 
 # Mengunduh file hasil prediksi
 @app.route('/download/<filename>')
 def download_file(filename):
-    return send_file('uploads/' + filename, as_attachment=True)
+    return send_file('result/' + filename, as_attachment=True)
 
 if __name__ == '__main__':
     app.run(debug=True)
