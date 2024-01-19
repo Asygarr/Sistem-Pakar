@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, send_file
 import pandas as pd
 from sklearn.svm import SVC
 from sklearn.model_selection import train_test_split
+import uuid  # Import the uuid module
 
 app = Flask(__name__)
 
@@ -30,8 +31,10 @@ def result():
         return render_template('index.html', message='No selected file')
 
     if file:
-        # Menyimpan file 
-        file_path = 'uploads/' + file.filename
+        # Memuat random unique identifier
+        unique_id = str(uuid.uuid4())
+        # Menggabungkan unique identifier dengan nama file yang diupload
+        file_path = 'uploads/' + unique_id + '_' + file.filename
         file.save(file_path)
 
         # Mengambil data dari file yang sudah diupload
@@ -45,8 +48,9 @@ def result():
         result_df = pd.DataFrame({'Nama': df.iloc[:, 0], 'Hasil': predictions})
         result_df['Hasil'] = result_df['Hasil'].replace({1: 'positif', 0: 'negatif'})
 
-        # Menyimpan hasil prediksi ke dalam file excel
-        result_path = 'result/hasil diagnosa.xlsx'
+        # Membuat file hasil prediksi
+        result_unique_id = str(uuid.uuid4())
+        result_path = 'result/' + result_unique_id + '_hasil_diagnosa.xlsx'
         result_df.to_excel(result_path, index=False)
 
         # Membaca file hasil prediksi dan mengonversinya ke HTML
